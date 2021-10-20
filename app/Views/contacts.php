@@ -70,5 +70,33 @@
 			<?php echo $pagination->links(); ?>
 		</div>
 	</div>
+	<script>
+		function confirmDelete(contact_id){
+			Swal.fire({
+				title: '¿Está seguro de eliminar el registro?',
+				text: "No se podrá revertir el cambio",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Sí, bórralo',
+				cancelButtonText: 'Cancelar'
+			}).then((result) => {
+				console.log(result);
+				if (result.value) {
+					console.log("<?php echo base_url(); ?>/delete/"+contact_id);
+					Swal.fire(
+						'¡Borrado!',
+						'El contacto ha sido borrado',
+						'success'
+					);
+					setTimeout(function(){
+						window.location.href = "<?php echo base_url(); ?>/delete/"+contact_id;
+					},1500);
+					
+				}
+			});
+		}
+	</script>
 </body>
 </html>

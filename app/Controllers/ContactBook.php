@@ -10,7 +10,7 @@ class ContactBook extends BaseController{
     
     public function index(){
         $contactsModel 		= new ContactsModel($db);
-		
+
         $contacts  			= [
 			'contacts' 		=> $contactsModel->paginate(3), 
 			'pagination' 	=> $contactsModel->pager
@@ -68,5 +68,33 @@ class ContactBook extends BaseController{
 		
 
         return view('head').view('contacts', $contacts);
+    }
+
+	public function edit(){
+        $contactsModel  	= new ContactsModel($db);
+        $request        	= \Config\Services::request();
+		$id					= $request->getPostGet('id');
+		if(!$id){
+			$id				= $request->uri->getSegment(2);
+		}
+        $contact 			= ['contact'=>$contactsModel->find([$id])];
+
+        return view('head').view('form', $contact);
+    }
+
+	public function delete(){
+        $contactsModel  	= new ContactsModel($db);
+        $request        	= \Config\Services::request();
+		$id					= $request->getPostGet('id');
+		if(!$id){
+			$id				= $request->uri->getSegment(2);
+		}
+		$contactsModel->delete($id);
+		$contact  			= [
+			'contacts' 		=> $contactsModel->paginate(3), 
+			'pagination' 	=> $contactsModel->pager
+		];
+
+        return view('head').view('contacts', $contact);
     }
 }

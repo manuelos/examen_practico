@@ -33,6 +33,8 @@ $routes->setAutoRoute(true);
 // route since we don't have to scan directories.
 $routes->get('/', 'ContactBook::index');
 $routes->get('/form', 'ContactBook::form');
+$routes->get('/edit/(:any)', 'ContactBook::edit');
+$routes->get('/delete/(:any)', 'ContactBook::delete');
 
 /*
  * --------------------------------------------------------------------
