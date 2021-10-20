@@ -103,3 +103,88 @@
 		</div>
     </div>
 </div>
+<script>
+	$('#load_gps').click(function(){
+        var myform 			= $(this).parents('form');
+		var street_address  = myform.find('input[name="street_address"]');
+        var number_address  = myform.find('input[name="number_address"]');
+        var suburb_address  = myform.find('input[name="suburb_address"]');
+        var zip_code        = myform.find('input[name="zip_code"]');
+        var city            = myform.find('input[name="city"]');
+        var state           = myform.find('input[name="state"]');
+
+		if(!validateGps(street_address,number_address,suburb_address,zip_code,city,state)) return;
+		
+		var fulladdress = (street_address.val()+" "+number_address.val()+" "+suburb_address.val()+" "+zip_code.val()+" "+city.val()+" "+state.val()).trim();
+        
+		$.ajax({
+			type: 'POST',
+			url: "<?php echo base_url(); ?>/ContactBook/restservice",
+			data: {'fulladdress':fulladdress}
+		})
+		.done(function( data ) {
+			var response = JSON.parse(data);
+			if(response.length){
+				var lat = response[0]['lat'];
+				var lon = response[0]['lon'];
+				myform.find('input[name="latitude"]').val(lat);
+        		myform.find('input[name="longitude"]').val(lon);
+				Swal.fire({
+					position: 'top-end',
+					icon: 'success',
+					title: 'Latitud y Longitud encontrada.',
+					showConfirmButton: false,
+					timer: 1500
+				});
+			}else{
+				Swal.fire({
+					title: 'Error!',
+					text: 'No se encontraron resultados de latitud y longitud.',
+					icon: 'error',
+					confirmButtonText: 'Aceptar'
+				});
+			}
+		});
+    });
+	function showErrorMsg(text){
+		Swal.fire({
+			title: 'Error!',
+			text: text,
+			icon: 'error',
+			confirmButtonText: 'Aceptar'
+		});
+	}
+	function validateGps(street_address,number_address,suburb_address,zip_code,city,state){
+		if(street_address.val() == ""){
+			street_address.focus();
+			showErrorMsg("Favor de llenar el campo de Domicilio para usar GPS");
+			return false;
+		}
+		if(number_address.val() == ""){
+			number_address.focus();
+			showErrorMsg("Favor de llenar el campo de Número para usar GPS");
+			return false;
+		}
+		if(suburb_address.val() == ""){
+			suburb_address.focus();
+			showErrorMsg("Favor de llenar el campo de Colonia para usar GPS");
+			return false;
+		}
+		if(zip_code.val() == ""){
+			zip_code.focus();
+			showErrorMsg("Favor de llenar el campo de Código Postal para usar GPS");
+			return false;
+		}
+		if(city.val() == ""){
+			city.focus();
+			showErrorMsg("Favor de llenar el campo de Ciudad para usar GPS");
+			return false;
+		}
+		if(state.val() == ""){
+			state.focus();
+			showErrorMsg("Favor de llenar el campo de Estado para usar GPS");
+			return false;
+		}
+		return true;
+	}
+</script>
