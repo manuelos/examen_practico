@@ -10,7 +10,7 @@ class ContactBook extends BaseController{
     
     public function index(){
         $contactsModel 		= new ContactsModel($db);
-        
+		
         $contacts  			= [
 			'contacts' 		=> $contactsModel->paginate(3), 
 			'pagination' 	=> $contactsModel->pager
@@ -36,4 +36,37 @@ class ContactBook extends BaseController{
 		curl_close($curl_handle);
 		echo $buffer;
 	}
+
+	public function save(){
+        $contactsModel 	 	= new ContactsModel($db);
+        $request        	= \Config\Services::request();
+        $data           	= array(
+			'name'          => trim($request->getPostGet('name')),
+			'email'         => trim($request->getPostGet('email')),
+            'street_address'=> trim($request->getPostGet('street_address')),
+            'number_address'=> trim($request->getPostGet('number_address')),
+            'suburb_address'=> trim($request->getPostGet('suburb_address')),
+            'zip_code'		=> trim($request->getPostGet('zip_code')),
+            'city'			=> trim($request->getPostGet('city')),
+            'state'			=> trim($request->getPostGet('state')),
+            'phone'			=> trim($request->getPostGet('phone')),
+            'latitude'		=> trim($request->getPostGet('latitude')),
+            'longitude'		=> trim($request->getPostGet('longitude'))
+		);
+		$id 				= $request->getPostGet('id');
+		if($id){
+			$data['id'] 	= $id;
+		}
+		if($contactsModel->save($data)===false){
+			// var_dump($contactsModel->errors());
+		}
+
+		$contacts  			= [
+			'contacts' 		=> $contactsModel->paginate(3), 
+			'pagination' 	=> $contactsModel->pager
+		];
+		
+
+        return view('head').view('contacts', $contacts);
+    }
 }

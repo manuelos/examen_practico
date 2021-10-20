@@ -146,6 +146,131 @@
 			}
 		});
     });
+	$('#form_save').find('#btnsubmit').click(function(evt){
+		console.log("submit btn");
+		var myform 			= $(this).parents('form');
+		var name  			= myform.find('input[name="name"]');
+		var street_address  = myform.find('input[name="street_address"]');
+        var number_address  = myform.find('input[name="number_address"]');
+        var suburb_address  = myform.find('input[name="suburb_address"]');
+        var zip_code        = myform.find('input[name="zip_code"]');
+        var city            = myform.find('input[name="city"]');
+        var state           = myform.find('input[name="state"]');
+        var phone           = myform.find('input[name="phone"]');
+        var email           = myform.find('input[name="email"]');
+        var latitude        = myform.find('input[name="latitude"]');
+        var longitude       = myform.find('input[name="longitude"]');
+
+		if(!validateForm(name,street_address,number_address,suburb_address,zip_code,city,state,phone,email,latitude,longitude)){
+			if (!myform[0].checkValidity()) {
+				$(myform).find('input[name="save"]').click(); //force show html validation message
+			}
+			return;
+		}else{
+			myform.submit();             
+		}
+	});
+	$('#form_save').submit(function(evt){
+		console.log("submit form");
+		evt.preventDefault();
+		var myform 			= $(this);
+
+		$.ajax({
+			type: myform.attr('method'),
+			url: myform.attr('action'),
+			data: myform.serialize()
+		}).done(function(data) {
+			console.log("data", data);
+			Swal.fire({
+				position: 'top-end',
+				icon: 'success',
+				title: 'Se guardó la información correctamente.',
+				showConfirmButton: false,
+				timer: 1500
+			});
+			setTimeout(function(){
+				window.location.href = "<?php echo base_url(); ?>";
+			},1500);
+		});
+	});
+	
+	function validateForm(name,street_address,number_address,suburb_address,zip_code,city,state,phone,email,latitude,longitude){
+		if(name.val() == ""){
+			name.focus();
+			showErrorMsg("Favor de llenar el campo de Nombre");
+			return false;
+		}
+		if(street_address.val() == ""){
+			street_address.focus();
+			showErrorMsg("Favor de llenar el campo de Domicilio");
+			return false;
+		}
+		if(number_address.val() == ""){
+			number_address.focus();
+			showErrorMsg("Favor de llenar el campo de Número");
+			return false;
+		}
+		if(suburb_address.val() == ""){
+			suburb_address.focus();
+			showErrorMsg("Favor de llenar el campo de Colonia");
+			return false;
+		}
+		// if(zip_code.val() == ""){
+		// 	zip_code.focus();
+		// 	showErrorMsg("Favor de llenar el campo de Código Postal");
+		// 	return false;
+		// }
+		if(city.val() == ""){
+			city.focus();
+			showErrorMsg("Favor de llenar el campo de Ciudad");
+			return false;
+		}
+		// if(state.val() == ""){
+		// 	state.focus();
+		// 	showErrorMsg("Favor de llenar el campo de Estado");
+		// 	return false;
+		// }
+		if(phone.val() == ""){
+			phone.focus();
+			showErrorMsg("Favor de llenar el campo de Teléfono");
+			return false;
+		}
+		if(isNaN(phone.val())){
+			phone.focus();
+			showErrorMsg("Favor de llenar el campo de Teléfono con sólo números");
+			return false;
+		}
+		if(phone.val().length > 10){
+			phone.focus();
+			showErrorMsg("Favor de llenar el campo de Teléfono con máximo de 10 dígitos");
+			return false;
+		}
+		if(email.val() == ""){
+			email.focus();
+			showErrorMsg("Favor de llenar el campo de Correo Electrónico");
+			return false;
+		}
+		if(!validateEmail(email.val())){
+			email.focus();
+			showErrorMsg("Favor de llenar el campo de Correo Electrónico con formato válido (test@test.com).");
+			return false;
+		}
+		if(latitude.val() == ""){
+			latitude.focus();
+			showErrorMsg("Favor de llenar el campo de Latitud");
+			return false;
+		}
+		if(longitude.val() == ""){
+			longitude.focus();
+			showErrorMsg("Favor de llenar el campo de Longitud");
+			return false;
+		}
+		return true;
+	}
+	function validateEmail(email) {
+        var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
 	function showErrorMsg(text){
 		Swal.fire({
 			title: 'Error!',
