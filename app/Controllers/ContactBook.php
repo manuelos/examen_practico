@@ -18,4 +18,8 @@ class ContactBook extends BaseController{
 
         return view('head').view('contacts', $contacts);
     }
+
+    public function form(){
+        return view('head').view('form');
+    }
 }
